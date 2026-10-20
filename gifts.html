@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Roohi's Gift Box</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="floating-hearts" aria-hidden="true"></div>
+
+    <header class="site-header">
+      <div class="brand">🐧 Roohi 18</div>
+      <nav class="main-nav">
+        <a href="index.html">Home</a>
+        <a href="letter.html">Letter</a>
+        <a href="memories.html">Memories</a>
+        <a href="gifts.html" class="active">Gifts</a>
+        <a href="wishlist.html">Wishlist</a>
+      </nav>
+      <button class="music-toggle" type="button" id="music-toggle" aria-label="Toggle music">
+        <span>♫</span> Music Off
+      </button>
+    </header>
+
+    <main class="page-shell">
+      <div class="page-header reveal">
+        <p class="eyebrow">Open and discover</p>
+        <h1>Birthday gifts</h1>
+        <p class="subtitle">Every gift is a little reminder that you are loved, appreciated, and deeply cherished.</p>
+      </div>
+
+      <div class="gift-grid reveal">
+        <button class="gift-box" type="button" data-message="A pocket full of hugs, laughter, and the kind of peace that always follows you.">
+          <span class="gift-icon">🎁</span>
+          <strong>Gift 1</strong>
+          <span>Warm hugs</span>
+        </button>
+        <button class="gift-box" type="button" data-message="A forever smile that only you can bring to the people who love you.">
+          <span class="gift-icon">🎀</span>
+          <strong>Gift 2</strong>
+          <span>Sweet smiles</span>
+        </button>
+        <button class="gift-box" type="button" data-message="A whole year filled with beautiful memories, calm mornings, and soft little joys.">
+          <span class="gift-icon">💝</span>
+          <strong>Gift 3</strong>
+          <span>Happy moments</span>
+        </button>
+        <button class="gift-box" type="button" data-message="The best treasure of all: love, gratitude, and someone who will always celebrate you.">
+          <span class="gift-icon">🌸</span>
+          <strong>Gift 4</strong>
+          <span>Endless love</span>
+        </button>
+      </div>
+
+      <div class="gift-message reveal" id="gift-message">Pick a gift to reveal a sweet surprise ✨</div>
+    </main>
+
+    <footer class="site-footer">Made with all my heart for Roohi ✨</footer>
+
+    <script src="script.js"></script>
+  </body>
+</html>
