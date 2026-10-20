@@ -73,12 +73,11 @@ if (wishButton) {
 const musicToggle = document.getElementById('music-toggle');
 const birthdayAudio = new Audio('song.mp3');
 birthdayAudio.loop = true;
-birthdayAudio.volume = 0.45;
+birthdayAudio.volume = 0.35;
 birthdayAudio.preload = 'auto';
 
 function updateMusicButton(isPlaying) {
   if (!musicToggle) return;
-
   musicToggle.dataset.playing = String(isPlaying);
   musicToggle.innerHTML = isPlaying
     ? '<span>♫</span> Music On'
@@ -90,10 +89,15 @@ function setMusicState(isPlaying) {
 
   if (isPlaying) {
     birthdayAudio.muted = false;
-    birthdayAudio.play().catch(() => {
-      updateMusicButton(false);
-    });
-    updateMusicButton(true);
+    const playPromise = birthdayAudio.play();
+
+    if (playPromise && typeof playPromise.then === 'function') {
+      playPromise.then(() => updateMusicButton(true)).catch(() => {
+        updateMusicButton(false);
+      });
+    } else {
+      updateMusicButton(true);
+    }
   } else {
     birthdayAudio.pause();
     birthdayAudio.currentTime = 0;
@@ -103,7 +107,15 @@ function setMusicState(isPlaying) {
 
 if (musicToggle) {
   updateMusicButton(true);
-  setMusicState(true);
+
+  const enableMusicOnInteraction = () => {
+    setMusicState(true);
+    document.removeEventListener('pointerdown', enableMusicOnInteraction);
+    document.removeEventListener('keydown', enableMusicOnInteraction);
+  };
+
+  document.addEventListener('pointerdown', enableMusicOnInteraction, { once: true });
+  document.addEventListener('keydown', enableMusicOnInteraction, { once: true });
 
   musicToggle.addEventListener('click', () => {
     const isPlaying = musicToggle.dataset.playing === 'true';
@@ -150,4 +162,3 @@ giftButtons.forEach((button) => {
     }
   });
 });
-
