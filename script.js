@@ -84,42 +84,50 @@ function updateMusicButton(isPlaying) {
     : '<span>♫</span> Music Off';
 }
 
-function setMusicState(isPlaying) {
-  if (!musicToggle) return;
-
-  if (isPlaying) {
+async function playMusic() {
+  try {
     birthdayAudio.muted = false;
-    const playPromise = birthdayAudio.play();
-
-    if (playPromise && typeof playPromise.then === 'function') {
-      playPromise.then(() => updateMusicButton(true)).catch(() => {
-        updateMusicButton(false);
-      });
-    } else {
-      updateMusicButton(true);
-    }
-  } else {
-    birthdayAudio.pause();
-    birthdayAudio.currentTime = 0;
+    await birthdayAudio.play();
+    updateMusicButton(true);
+    return true;
+  } catch (error) {
     updateMusicButton(false);
+    console.warn('Audio play prevented until user interaction:', error);
+    return false;
   }
+}
+
+function pauseMusic() {
+  birthdayAudio.pause();
+  birthdayAudio.currentTime = 0;
+  updateMusicButton(false);
 }
 
 if (musicToggle) {
   updateMusicButton(true);
 
-  const enableMusicOnInteraction = () => {
-    setMusicState(true);
-    document.removeEventListener('pointerdown', enableMusicOnInteraction);
-    document.removeEventListener('keydown', enableMusicOnInteraction);
+  const startOnInteraction = async () => {
+    const started = await playMusic();
+    if (!started) {
+      document.addEventListener('pointerdown', startOnInteraction, { once: true });
+      document.addEventListener('keydown', startOnInteraction, { once: true });
+    }
+    document.removeEventListener('pointerdown', startOnInteraction);
+    document.removeEventListener('keydown', startOnInteraction);
   };
 
-  document.addEventListener('pointerdown', enableMusicOnInteraction, { once: true });
-  document.addEventListener('keydown', enableMusicOnInteraction, { once: true });
+  document.addEventListener('pointerdown', startOnInteraction, { once: true });
+  document.addEventListener('keydown', startOnInteraction, { once: true });
 
-  musicToggle.addEventListener('click', () => {
+  musicToggle.addEventListener('click', async (event) => {
+    event.stopPropagation();
     const isPlaying = musicToggle.dataset.playing === 'true';
-    setMusicState(!isPlaying);
+
+    if (isPlaying) {
+      pauseMusic();
+    } else {
+      await playMusic();
+    }
   });
 }
 
