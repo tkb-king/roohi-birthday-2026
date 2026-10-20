@@ -71,59 +71,43 @@ if (wishButton) {
 }
 
 const musicToggle = document.getElementById('music-toggle');
-let audioCtx = null;
-let musicTimer = null;
+const birthdayAudio = new Audio('song.mp3');
+birthdayAudio.loop = true;
+birthdayAudio.volume = 0.45;
+birthdayAudio.preload = 'auto';
 
-function playBirthdayTune() {
-  if (!audioCtx) {
-    const AudioCtor = window.AudioContext || window.webkitAudioContext;
-    audioCtx = new AudioCtor();
-  }
+function updateMusicButton(isPlaying) {
+  if (!musicToggle) return;
 
-  if (audioCtx.state === 'suspended') {
-    audioCtx.resume();
-  }
-
-  const notes = [261.63, 329.63, 392.0, 329.63, 349.23, 440.0, 392.0, 329.63];
-  let noteIndex = 0;
-
-  musicTimer = setInterval(() => {
-    const oscillator = audioCtx.createOscillator();
-    const gain = audioCtx.createGain();
-
-    oscillator.type = 'sine';
-    oscillator.frequency.value = notes[noteIndex % notes.length];
-    gain.gain.value = 0.03;
-
-    oscillator.connect(gain);
-    gain.connect(audioCtx.destination);
-
-    oscillator.start();
-    oscillator.stop(audioCtx.currentTime + 0.3);
-    noteIndex += 1;
-  }, 280);
+  musicToggle.dataset.playing = String(isPlaying);
+  musicToggle.innerHTML = isPlaying
+    ? '<span>♫</span> Music On'
+    : '<span>♫</span> Music Off';
 }
 
-function stopBirthdayTune() {
-  if (musicTimer) {
-    clearInterval(musicTimer);
-    musicTimer = null;
+function setMusicState(isPlaying) {
+  if (!musicToggle) return;
+
+  if (isPlaying) {
+    birthdayAudio.muted = false;
+    birthdayAudio.play().catch(() => {
+      updateMusicButton(false);
+    });
+    updateMusicButton(true);
+  } else {
+    birthdayAudio.pause();
+    birthdayAudio.currentTime = 0;
+    updateMusicButton(false);
   }
 }
 
 if (musicToggle) {
+  updateMusicButton(true);
+  setMusicState(true);
+
   musicToggle.addEventListener('click', () => {
     const isPlaying = musicToggle.dataset.playing === 'true';
-
-    if (isPlaying) {
-      musicToggle.dataset.playing = 'false';
-      musicToggle.innerHTML = '<span>♫</span> Music Off';
-      stopBirthdayTune();
-    } else {
-      musicToggle.dataset.playing = 'true';
-      musicToggle.innerHTML = '<span>♫</span> Music On';
-      playBirthdayTune();
-    }
+    setMusicState(!isPlaying);
   });
 }
 
@@ -166,25 +150,4 @@ giftButtons.forEach((button) => {
     }
   });
 });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
